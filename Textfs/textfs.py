@@ -1,8 +1,14 @@
+'''
+Group Name :: Juggernaut
+Group ID :: 65
+Problem Statement :: Textfs - A text based file system.
+Assumptions :: 'ramesh.txt' is a single text file which contains the metadata and content of all the other text files such that for each file, the first 10 lines store the 10-tuple metadata, the 11th line stores the number of lines and from 12th line onwards the contents of that particular file are stored. This arrangement is followed for all the text files which are created in TextFS.
+'''
 import os
 import fileinput
 
 while True:
-	command = raw_input() #input as string
+	command = raw_input() # take input string for an operation
 	if 'create' in command:
 		filename = command.split()[1]
 		files = [f for f in os.listdir('.') if os.path.isfile(f)]
@@ -21,7 +27,7 @@ while True:
 		fin.close()
 		fin2.close()
 
-	elif 'copy' in command:
+	elif 'copy' in command: # copy file external_file
 		flag = 0
 		file1 = command.split()[1]
 		file2 = command.split()[2]
@@ -42,7 +48,7 @@ while True:
 		in_file.close()
 		out_file.close()
 	
-	elif 'delete' in command:
+	elif 'delete' in command: # delete file
 		filename = command.split()[1]
 		files = [f for f in os.listdir('.') if os.path.isfile(f)]
 		if filename not in files:
@@ -68,7 +74,7 @@ while True:
 		print "Ctrl-z to exit"
 		in_file.close()
 
-	elif 'echo' in command:
+	elif 'echo' in command: # echo file
 		filename = command.split()[1]
 		files = [f for f in os.listdir('.') if os.path.isfile(f)]
 		if filename not in files:
@@ -89,7 +95,7 @@ while True:
 		print "Ctrl-z to exit"
 		in_file.close()
 
-	elif 'ls' in command:
+	elif 'ls' in command: # ls
 		files = [f for f in os.listdir('.') if os.path.isfile(f)]
 		for filename in files:		
 			print filename
