@@ -29,23 +29,24 @@ public:
 	//..............................................................Function to add line.........................................................
 	void addline(string line)
 	{
-		fstream fp("test.txt",ios::app);
+		ofstream fp("test.txt",ios::app);
 		fp<<line<<endl;
 		node temp;
 		temp.line=line;
 		strcpy(temp.command,"add\0");
 		temp.lineno=-1;
 		S.push(temp);
+		fp.close();
 	}
 	//end of addline function...........................................................................................................
 
 	//.............................................................Function to delete line..............................................
-	void deleteline(string d)
+	int deleteline(string d)
 	{
 		int lineno=-1,i=0;
 		string l;
-		fstream tempf("temp.txt",ios::app);
-		fstream fp("test.txt");
+		ofstream tempf("temp.txt",ios::app);
+		ifstream fp("test.txt");
 		while(getline(fp,l,'\n'))
 		{
 			i++;
@@ -70,6 +71,11 @@ public:
 			temp.lineno=lineno;
 			S.push(temp);
 		}
+		else
+		{
+			cout<<"\nThe line you want to delete doesn't exist in the file.";
+		}
+		return lineno;
 	}
 	//end of deleteline function.............................................................................................................
 
@@ -77,7 +83,7 @@ public:
 	void display(int vr)
 	{
 		int itoken,dispnoline;
-		fstream fv("version.txt",ios::in);
+		ifstream fv("version.txt",ios::in);
 		string line;
 
 		//find the version asked exist and the details of the version
@@ -114,7 +120,7 @@ public:
 			string bline,copy;
 			ss>>n1;
 			ss>>n2;
-			fstream fb("backup.txt",ios::in);
+			ifstream fb("backup.txt",ios::in);
 			do
 			{
 				getline(fb,bline,'\n');
@@ -134,7 +140,7 @@ public:
 			bs>>copy;
 			bs>>copy;
 			n2c=n2;
-			if(prev<n2)
+			if(prev<=n2)
 			{
 				n2+=inc;
 				inc++;
@@ -153,7 +159,7 @@ public:
 			fb.close();
 		}//end of while to take lines needed from backup file
 		string copy;
-		fstream ft("test.txt",ios::in);
+		ifstream ft("test.txt",ios::in);
 		for(int k=0;k<dispnoline;k++)
 		{
 			if(out[k]==false)
@@ -179,7 +185,7 @@ public:
 		string lookahead,line;
 		vr=findlatestversion();
 		count=0;
-		fstream tfile("test.txt",ios::in);
+		ifstream tfile("test.txt",ios::in);
 		while(getline(tfile,lookahead,'\n'))
 			count++;
 		tfile.close();
@@ -188,7 +194,7 @@ public:
 		cs<<count;
 		vs<<vr;
 		line=vs.str()+" "+cs.str()+" "+cs.str();
-		fstream f("version.txt",ios::app);
+		ofstream f("version.txt",ios::app);
 		f<<line<<endl;
 		f.close();
 
@@ -208,7 +214,7 @@ public:
 
 				//to create the backup file to store deleted lines
 
-				fstream bf("backup.txt",ios::app);
+				ofstream bf("backup.txt",ios::app);
 				ostringstream bvr,bl;
 				string backup;
 				bvr<<(vr+1);
@@ -222,7 +228,7 @@ public:
 				//to connected the respective versions with their deleted lines
 				while(v>0)
 				{
-					fstream fv("version.txt",ios::in);
+					ifstream fv("version.txt",ios::in);
 					for(int k=1;k<=v;k++)
 						getline(fv,vline,'\n');
 
@@ -267,8 +273,8 @@ public:
 						fv.close();
 						string l;
 						int index;
-						fstream fv1("tempv.txt",ios::app);
-						fstream ofv("version.txt",ios::in);
+						ofstream fv1("tempv.txt",ios::app);
+						ifstream ofv("version.txt",ios::in);
 						index=0;
 						while(getline(ofv,l,'\n'))
 						{
@@ -307,10 +313,10 @@ public:
 	{
 		int itoken,v=0;
 		string lookahead,line;
-		fstream fp("version.txt",ios::in);
+		ifstream fp("version.txt",ios::in);
 		if(fp!=NULL)
 		{
-			fstream temp("version.txt",ios::in);
+			ifstream temp("version.txt",ios::in);
 			while(getline(temp,lookahead,'\n'))
 				getline(fp,line,'\n');
 			if(line!="")
@@ -404,11 +410,13 @@ int main()
 		//to delete a line
 		else if(strcmp(input,"delete")==0)
 		{
+			int check;
 			string d;
-			T.op++;
 			cout<<"\nEnter the line you want to delete :: ";
 			getline(cin,d);
-			T.deleteline(d);
+			check=T.deleteline(d);
+			if(check>0)
+				T.op++;
 			new_c;
 		}
 		else if(strcmp(input,"exit")==0)
@@ -487,7 +495,7 @@ int main()
 		{
 			if(T.op==0)
 			{
-				cout<<"\nNo operation done to create a new version";
+				cout<<"\nNo changes done to create a new version";
 				new_c;
 			}
 			else
